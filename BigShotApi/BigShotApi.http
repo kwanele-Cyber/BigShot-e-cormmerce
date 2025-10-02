@@ -1,0 +1,6 @@
+@BigShotApi_HostAddress = http://localhost:5023
+
+GET {{BigShotApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
