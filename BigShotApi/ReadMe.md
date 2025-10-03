@@ -12,7 +12,7 @@ System Over View
 2. `ApiKeyMiddleware` validates the key and attaches the user.
 3. Controller enforces role-based authorization.
 4. Controller calls data service for business logic.
-5. Data service uses EF to interact with the database.
+5. Data service uses EntityFramework to interact with the database.
 6. Response flows back to the client.  
 
 ### Data Services
