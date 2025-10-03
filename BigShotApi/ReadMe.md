@@ -1,7 +1,7 @@
 ﻿# BigShot eCommerce API
 
 **Admin API Key:** `ef1a74e8-5fdd-48d5-9439-4386d60bd522`  
-**User API Key:** `2fb5c9f8-c7dd-48bf-b4f3-d89c4fa557fa`  
+**User API Key:** `2fb5c9f8-c7dd-48bf-b4f3-d89c4fa557fa`
 
 ---
 
@@ -192,7 +192,6 @@ Represents an individual item within an order.
 
 ---
 
-
 ## Security
 All endpoints require an **API Key** in the request header:
 
@@ -204,29 +203,75 @@ All endpoints require an **API Key** in the request header:
 
 **Middleware:** `ApiKeyMiddleware`
 
-- **Purpose:** Validate incoming HTTP requests for a valid API key.
-- **Header used:** `X-Api-Key`
-- **How it works:**
+```csharp
+using BigShotCore.Data.Models;
+using BigShotCore.Infrastructure.Database;
+using Microsoft.EntityFrameworkCore;
+
+namespace BigShotApi.Authentication
+{
+    public class ApiKeyMiddleware
+    {
+        private readonly RequestDelegate _next;
+        private const string APIKEY_HEADER = "X-Api-Key";
+
+        public ApiKeyMiddleware(RequestDelegate next)
+        {
+            _next = next;
+        }
+
+        public async Task InvokeAsync(HttpContext context, AppDbContext db)
+        {
+            if (!context.Request.Headers.TryGetValue(APIKEY_HEADER, out var extractedApiKey))
+            {
+                context.Response.StatusCode = 401; // Unauthorized
+                await context.Response.WriteAsync("API Key was not provided.");
+                return;
+            }
+
+            // Include role with the user
+            var user = await db.Users.Include(u => u.Role)
+                                     .FirstOrDefaultAsync(u => u.ApiKey == extractedApiKey.ToString());
+
+            if (user == null)
+            {
+                context.Response.StatusCode = 403; // Forbidden
+                await context.Response.WriteAsync("Invalid API Key.");
+                return;
+            }
+
+            // Attach user to HttpContext for controller access
+            context.Items["User"] = user;
+
+            await _next(context);
+        }
+    }
+}
+```
+
+* **Purpose:** Validate incoming HTTP requests for a valid API key.
+* **Header used:** `X-Api-Key`
+* **How it works:**
   1. Checks if the request contains the `X-Api-Key` header:
      ```csharp
      if (!context.Request.Headers.TryGetValue(APIKEY_HEADER, out var extractedApiKey))
      ```
-     - If missing → responds with `401 Unauthorized`.
+     * If missing → responds with `401 Unauthorized`.
   2. Looks up the user in the database, including their role:
      ```csharp
      var user = await db.Users.Include(u => u.Role)
                               .FirstOrDefaultAsync(u => u.ApiKey == extractedApiKey.ToString());
      ```
-     - If not found → responds with `403 Forbidden`.
+     * If not found → responds with `403 Forbidden`.
   3. Attaches the authenticated user to `HttpContext.Items["User"]`:
      ```csharp
      context.Items["User"] = user;
      ```
-     - Allows controllers and filters to access the authenticated user.
+     * Allows controllers and filters to access the authenticated user.
 
-- **Key Points:**
-  - Only requests with a valid API key can reach protected endpoints.
-  - Middleware runs **before the controller action**, ensuring all downstream code has access to the authenticated user.
+* **Key Points:**
+  * Only requests with a valid API key can reach protected endpoints.
+  * Middleware runs **before the controller action**, ensuring all downstream code has access to the authenticated user.
 
 ---
 
@@ -234,9 +279,9 @@ All endpoints require an **API Key** in the request header:
 
 ### a) `[AuthorizeRole("Role1", "Role2")]`
 
-- **Purpose:** Restrict access to one or more roles.
-- **Implementation:** Implements `IAsyncActionFilter`.
-- **Mechanism:**
+* **Purpose:** Restrict access to one or more roles.
+* **Implementation:** Implements `IAsyncActionFilter`.
+* **Mechanism:**
   1. Retrieves the user from `HttpContext`:
      ```csharp
      var user = context.HttpContext.GetCurrentUser();
@@ -248,21 +293,20 @@ All endpoints require an **API Key** in the request header:
      ```
   3. If role matches → request continues to the controller action.
 
-- **Usage Examples:**
+* **Usage Examples:**
   ```csharp
   [AuthorizeRole("Customer")]
   public async Task<IActionResult> AddOrder(...)
 
   [AuthorizeRole("Admin", "Customer")]
   public async Task<IActionResult> ListMyOrders(...)
-````
+  ```
 
 ### b) `[RequireRole("Role")]`
 
 * **Purpose:** Restrict access to exactly one role.
 * **Mechanism:** Uses `HttpContext.Items["User"]` set by `ApiKeyMiddleware`.
 * **Check:**
-
   ```csharp
   if (!string.Equals(user.Role.Name, _role, StringComparison.OrdinalIgnoreCase))
       context.Result = new ForbidResult();
@@ -276,7 +320,6 @@ All endpoints require an **API Key** in the request header:
 2. **Middleware:** `ApiKeyMiddleware` validates API key and fetches user + role.
 3. **Controller Action:** `[AuthorizeRole]` or `[RequireRole]` checks user role.
 4. **Outcome:**
-
    * ✅ Valid API key + allowed role → request proceeds.
    * ❌ Invalid API key → `401 Unauthorized` or `403 Forbidden`.
    * ❌ Role not allowed → `403 Forbidden`.
@@ -286,11 +329,9 @@ All endpoints require an **API Key** in the request header:
 ### Summary Table
 
 | Layer              | Responsibility                 | Failure Result  |
-| ------------------ | ------------------------------ | --------------- |
+|--------------------|-------------------------------|-----------------|
 | `ApiKeyMiddleware` | Validate API key and load user | `401/403`       |
 | `[AuthorizeRole]`  | Allow multiple roles           | `403 Forbidden` |
 | `[RequireRole]`    | Allow exactly one role         | `403 Forbidden` |
 
-
-
-
+---
