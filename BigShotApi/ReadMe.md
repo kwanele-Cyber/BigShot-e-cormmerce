@@ -100,66 +100,98 @@ Represents an individual item within an order.
 - `Product.LongDescriptionMarkdown` stores the original Markdown content; `LongDescriptionHtml` stores the rendered HTML version for display.
 - All constraints are enforced via data annotations in C# (e.g., `[Required]`, `[MaxLength]`, `[Range]`).
 
-
----
-
-## Endpoints
+## Endpoints Explanation
 
 ### Chatbot
 - **POST** `/api/Chatbot/recommendations`  
   **Roles:** Admin, Customer  
   **Body:** `ChatbotRequestDto`  
-  **Response:** `ChatbotResponseDto`
+  **Response:** `ChatbotResponseDto`  
+  **Description:** Sends a user message to the AI chatbot. The service returns AI-generated replies and product recommendations based on the user's query. Accessible to both Admins and Customers.
 
 ### Orders
 - **GET** `/api/Orders/all`  
   **Roles:** Admin  
   **Query Params:** `pageSize`, `pageIndex`  
+  **Description:** Retrieves all orders in the system. Only accessible by Admins. Supports pagination using query parameters.
+
 - **GET** `/api/Orders/my-orders`  
   **Roles:** Admin, Customer  
   **Query Params:** `pageSize`, `pageIndex`  
+  **Description:** Admins can view all orders, while customers can view only their own orders. Pagination is supported.
+
 - **POST** `/api/Orders`  
   **Roles:** Customer  
   **Body:** `CreateOrderDto`  
+  **Description:** Allows a customer to create a new order with details like items and shipping address. Admins cannot create orders.
+
 - **DELETE** `/api/Orders/{id}`  
   **Roles:** Admin  
+  **Description:** Deletes a specific order by ID. Only Admins can perform this action. Returns `Ok` if successful, `NotFound` if the order does not exist.
 
 ### Products
 - **GET** `/api/Products/list`  
   **Roles:** Admin, Customer  
+  **Description:** Lists all products with optional pagination. Accessible to both Admins and Customers.
+
 - **GET** `/api/Products/{id}`  
   **Roles:** Admin, Customer  
+  **Description:** Retrieves detailed information for a single product by its ID.
+
 - **POST** `/api/Products`  
   **Roles:** Admin  
   **Body:** `CreateProductDto`  
+  **Description:** Adds a new product to the system. Only Admins can create products.
+
 - **PUT** `/api/Products/{id}`  
   **Roles:** Admin  
   **Body:** `UpdateProductDto`  
+  **Description:** Updates an existing product. Only Admins can update products. Returns `NotFound` if the product does not exist.
+
 - **DELETE** `/api/Products/{id}`  
   **Roles:** Admin  
+  **Description:** Deletes a product by ID. Admins only.
+
 - **GET** `/api/Products/search`  
   **Roles:** Admin, Customer  
+  **Description:** Searches products by keyword. Accessible to all users.
+
 - **GET** `/api/Products/filter`  
   **Roles:** Admin, Customer  
+  **Description:** Filters products by price range. Supports pagination.
+
 - **GET** `/api/Products/instock`  
   **Roles:** Admin, Customer  
+  **Description:** Retrieves all products that are currently in stock.
+
 - **GET** `/api/Products/toprated`  
   **Roles:** Admin, Customer  
+  **Description:** Retrieves top-rated products. The number of products returned can be configured with the `count` parameter.
 
 ### Users
 - **GET** `/api/Users/me`  
   **Roles:** Admin, Customer  
+  **Description:** Returns the currently authenticated user's details.
+
 - **POST** `/api/Users`  
   **Roles:** Admin  
   **Body:** `RegisterUserDto`  
+  **Description:** Creates a new user and returns their API key in the response header. Only Admins can register new users.
+
 - **GET** `/api/Users`  
   **Roles:** Admin  
+  **Description:** Retrieves all users in the system. Admin-only endpoint.
+
 - **PUT** `/api/Users/{id}/role`  
   **Roles:** Admin  
+  **Description:** Changes a user's role by ID. Only Admins can modify roles.
+
 - **DELETE** `/api/Users/{id}`  
   **Roles:** Admin  
+  **Description:** Deletes a user by ID. Admin-only action.
 
 ---
+
 
 ## Security
 All endpoints require an **API Key** in the request header:
