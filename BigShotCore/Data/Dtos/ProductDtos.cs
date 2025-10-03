@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Humanizer;
+using System.ComponentModel.DataAnnotations;
 
 namespace BigShotCore.Data.Dtos
 {
@@ -51,8 +52,12 @@ namespace BigShotCore.Data.Dtos
 
         [Url(ErrorMessage = "ImageUrl must be a valid URL.")]
         [MaxLength(500, ErrorMessage = "Image URL cannot exceed 500 characters.")]
-        string ImageUrl
-    );
+        string ImageUrl,
+
+        [Range(0, int.MaxValue, ErrorMessage = "Stock must be greater than zero.")]
+        int InStock,
+
+        double? Rating);
 
     // -------------------- Update DTO --------------------
     public record UpdateProductDto(

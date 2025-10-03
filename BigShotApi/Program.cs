@@ -1,4 +1,5 @@
 using BigShotApi.Authentication;
+using BigShotApi.Infrastructure;
 using BigShotCore.Data.Services;
 using BigShotCore.Infrastructure.Database;
 using Microsoft.AspNetCore.Http;
@@ -52,9 +53,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
         b => b.MigrationsAssembly("BigShotApi"))); // migrations stay in Web project
 
+
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IUserService, UserService>();
+//builder.Services.AddScoped<IChatbotService, ChatbotService>();
+
+//WebBased Services
+builder.Services.AddHttpClient<IChatbotService, OpenAiChatbotService>();
+
 
 
 var app = builder.Build();
@@ -84,6 +91,11 @@ using (var scope = app.Services.CreateScope())
     {
         //do-nothing
     }
+
+
+    // 🔹 Seed users + products
+    DbSeeder.SeedUsers(db);
+    DbSeeder.SeedProducts(db);
 }
 
 app.UseHttpsRedirection();

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BigShotApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251002151820_Init")]
+    [Migration("20251003113458_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace BigShotApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BigShotApi.Data.Models.AppRole", b =>
+            modelBuilder.Entity("BigShotCore.Data.Models.AppRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -41,21 +41,9 @@ namespace BigShotApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Admin"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Customer"
-                        });
                 });
 
-            modelBuilder.Entity("BigShotApi.Data.Models.AppUser", b =>
+            modelBuilder.Entity("BigShotCore.Data.Models.AppUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -84,27 +72,9 @@ namespace BigShotApi.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = -1,
-                            ApiKey = "jjTaQ96",
-                            Email = "therealadmin@gmail.com",
-                            RoleId = 1,
-                            UserName = "Admin"
-                        },
-                        new
-                        {
-                            Id = -2,
-                            ApiKey = "utpqr48",
-                            Email = "jake@gmail.com",
-                            RoleId = 1,
-                            UserName = "Jake"
-                        });
                 });
 
-            modelBuilder.Entity("BigShotApi.Data.Models.Order", b =>
+            modelBuilder.Entity("BigShotCore.Data.Models.Order", b =>
                 {
                     b.Property<int>("OrderId")
                         .ValueGeneratedOnAdd()
@@ -132,7 +102,7 @@ namespace BigShotApi.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("BigShotApi.Data.Models.OrderItem", b =>
+            modelBuilder.Entity("BigShotCore.Data.Models.OrderItem", b =>
                 {
                     b.Property<int>("OrderItemId")
                         .ValueGeneratedOnAdd()
@@ -159,7 +129,7 @@ namespace BigShotApi.Migrations
                     b.ToTable("OrderItem");
                 });
 
-            modelBuilder.Entity("BigShotApi.Data.Models.Product", b =>
+            modelBuilder.Entity("BigShotCore.Data.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -204,9 +174,9 @@ namespace BigShotApi.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("BigShotApi.Data.Models.AppUser", b =>
+            modelBuilder.Entity("BigShotCore.Data.Models.AppUser", b =>
                 {
-                    b.HasOne("BigShotApi.Data.Models.AppRole", "Role")
+                    b.HasOne("BigShotCore.Data.Models.AppRole", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -215,9 +185,9 @@ namespace BigShotApi.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("BigShotApi.Data.Models.Order", b =>
+            modelBuilder.Entity("BigShotCore.Data.Models.Order", b =>
                 {
-                    b.HasOne("BigShotApi.Data.Models.AppUser", "User")
+                    b.HasOne("BigShotCore.Data.Models.AppUser", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -226,24 +196,24 @@ namespace BigShotApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BigShotApi.Data.Models.OrderItem", b =>
+            modelBuilder.Entity("BigShotCore.Data.Models.OrderItem", b =>
                 {
-                    b.HasOne("BigShotApi.Data.Models.Order", null)
+                    b.HasOne("BigShotCore.Data.Models.Order", null)
                         .WithMany("Items")
                         .HasForeignKey("OrderId");
                 });
 
-            modelBuilder.Entity("BigShotApi.Data.Models.AppRole", b =>
+            modelBuilder.Entity("BigShotCore.Data.Models.AppRole", b =>
                 {
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("BigShotApi.Data.Models.AppUser", b =>
+            modelBuilder.Entity("BigShotCore.Data.Models.AppUser", b =>
                 {
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("BigShotApi.Data.Models.Order", b =>
+            modelBuilder.Entity("BigShotCore.Data.Models.Order", b =>
                 {
                     b.Navigation("Items");
                 });

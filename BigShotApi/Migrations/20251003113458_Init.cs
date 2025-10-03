@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace BigShotApi.Migrations
 {
     /// <inheritdoc />
@@ -109,24 +107,6 @@ namespace BigShotApi.Migrations
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "OrderId");
-                });
-
-            migrationBuilder.InsertData(
-                table: "Roles",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { 1, "Admin" },
-                    { 2, "Customer" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "Id", "ApiKey", "Email", "RoleId", "UserName" },
-                values: new object[,]
-                {
-                    { -2, "utpqr48", "jake@gmail.com", 1, "Jake" },
-                    { -1, "jjTaQ96", "therealadmin@gmail.com", 1, "Admin" }
                 });
 
             migrationBuilder.CreateIndex(

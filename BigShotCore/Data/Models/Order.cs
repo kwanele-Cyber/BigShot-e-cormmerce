@@ -4,6 +4,7 @@
     {
         public int OrderId { get; set; }
         public string CustomerName { get; set; } = null!;
+        public string Address { get; set; } = null!;
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
         public decimal Total { get; set; }
 

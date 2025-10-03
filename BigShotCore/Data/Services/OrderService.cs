@@ -19,10 +19,11 @@ namespace BigShotCore.Data.Services
 
         // -------------------- CRUD --------------------
 
-        public async Task<OrderDto> AddOrderAsync(CreateOrderDto dto, int UserId)
+
+        public async Task<OrderDto> AddOrderAsync(CreateOrderDto dto, int userId)
         {
             var order = dto.ToOrder();
-            order.UserId = UserId;
+            order.UserId = userId;
 
             // Start a transaction to ensure atomicity
             await using var transaction = await _db.Database.BeginTransactionAsync();
@@ -37,9 +38,17 @@ namespace BigShotCore.Data.Services
                     if (product.InStock < item.Quantity)
                         throw new InvalidOperationException($"Not enough stock for product {product.Name}. Available: {product.InStock}, Requested: {item.Quantity}");
 
+                    // Always fetch real DB price
+                    item.PriceAtPurchase = (decimal)product.Price;
+
                     // Reduce stock
                     product.InStock -= item.Quantity;
+                    item.Product = product;
+
                 }
+
+                // Recalculate order total
+                order.Total = order.Items.Sum(i => i.Quantity * i.PriceAtPurchase);
 
                 await _db.Orders.AddAsync(order);
                 await _db.SaveChangesAsync();
@@ -55,15 +64,22 @@ namespace BigShotCore.Data.Services
             }
         }
 
+
         public async Task<bool> DeleteOrderAsync(int id)
         {
-            var order = await _db.Orders.Include(o => o.Items).FirstOrDefaultAsync(o => o.OrderId == id);
+            var order = await _db.Orders
+                .Include(o => o.Items)
+                .ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync(o => o.OrderId == id);
+            
             if (order == null) return false;
 
             // Optionally, restore stock when deleting an order
             foreach (var item in order.Items)
             {
-                var product = await _db.Products.FirstOrDefaultAsync(p => p.Id == item.ProductId);
+                var product = await _db.Products
+                    .FirstOrDefaultAsync(p => p.Id == item.ProductId);
+
                 if (product != null)
                     product.InStock += item.Quantity;
             }
@@ -76,13 +92,18 @@ namespace BigShotCore.Data.Services
         public async Task<OrderDto?> GetOrderByIdAsync(int id)
         {
 
-            var order = await _db.Orders.Include(o => o.Items).FirstOrDefaultAsync(o => o.OrderId == id);
+            var order = await _db.Orders
+                .Include(o => o.Items)
+                .ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync(o => o.OrderId == id);
             return order?.ToDto();
         }
 
         public async Task<IEnumerable<OrderDto>> ListOrdersAsync(int pageSize, int pageIndex, int? userId = null)
         {
-            IQueryable<Order> query = _db.Orders.Include(o => o.Items);
+            IQueryable<Order> query = _db.Orders
+                .Include(o => o.Items)
+                .ThenInclude(i => i.Product); ;
 
             if (userId.HasValue)
                 query = query.Where(o => o.UserId == userId.Value);
@@ -100,7 +121,11 @@ namespace BigShotCore.Data.Services
 
         public async Task<bool> UpdateOrderAsync(int id, UpdateOrderDto dto)
         {
-            var order = await _db.Orders.Include(o => o.Items).FirstOrDefaultAsync(o => o.OrderId == id);
+            var order = await _db.Orders
+                                  .Include(o => o.Items)
+                                  .ThenInclude(i => i.Product)
+                                  .FirstOrDefaultAsync(o => o.OrderId == id);
+
             if (order == null) return false;
 
             order.UpdateFromDto(dto);
@@ -112,6 +137,7 @@ namespace BigShotCore.Data.Services
         {
             var orders = await _db.Orders
                                   .Include(o => o.Items)
+                                  .ThenInclude(i => i.Product)
                                   .Where(o => o.CustomerName.Contains(keyword))
                                   .OrderBy(o => o.OrderDate)
                                   .Skip(pageIndex * pageSize)

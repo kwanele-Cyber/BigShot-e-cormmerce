@@ -1,5 +1,6 @@
-﻿using BigShotCore.Data.Models;
-using BigShotCore.Data.Dtos;
+﻿using BigShotCore.Data.Dtos;
+using BigShotCore.Data.Models;
+using Humanizer;
 using Markdig;
 using System.Xml.Linq;
 
@@ -17,7 +18,9 @@ namespace BigShotCore.Extensions
                 LongDescriptionMarkdown = dto.LongDescriptionMarkdown,
                 LongDescriptionHtml = Markdown.ToHtml(dto.LongDescriptionMarkdown ?? ""),
                 Price = dto.Price,
-                ImageUrl = dto.ImageUrl
+                ImageUrl = dto.ImageUrl,
+                InStock = dto.InStock,
+                Rating = dto.Rating
             };
         }
 
@@ -30,7 +33,10 @@ namespace BigShotCore.Extensions
                 product.LongDescriptionMarkdown,
                 product.LongDescriptionHtml,
                 product.Price,
-                product.ImageUrl
+                product.ImageUrl,
+                product.InStock,
+                product.Rating
+
             );
         }
 

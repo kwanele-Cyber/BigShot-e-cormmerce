@@ -5,7 +5,9 @@
     );
 
     public record ChatbotResponseDto(
-        string Reply,
+        string SystemReply,
+        string? AiReply,               // AI-generated message
         IEnumerable<ProductDto> Recommendations
     );
+
 }
