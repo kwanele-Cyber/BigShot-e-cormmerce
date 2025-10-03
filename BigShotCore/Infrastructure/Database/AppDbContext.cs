@@ -42,7 +42,7 @@ namespace BigShotCore.Infrastructure.Database
                     UserName = "Jake",
                     Email = "jake@gmail.com",
                     ApiKey = "utpqr48",
-                    RoleId = 1
+                    RoleId = 2
                 }
             );
         }
