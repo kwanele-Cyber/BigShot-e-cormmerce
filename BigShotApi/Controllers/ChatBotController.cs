@@ -14,6 +14,7 @@ public class ChatbotController : ControllerBase
     }
 
     [HttpPost("recommendations")]
+    [AuthorizeRole("Customer")]
     public async Task<ActionResult<ChatbotResponseDto>> GetRecommendations([FromBody] ChatbotRequestDto request)
     {
         if (string.IsNullOrWhiteSpace(request.UserMessage))

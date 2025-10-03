@@ -25,7 +25,7 @@ public class OrdersController : ControllerBase
 
     // Admins see all orders; customers see only their own
     [HttpGet("my-orders")]
-    [AuthorizeRole("Admin", "Customer")]
+    [AuthorizeRole("Customer")]
     public async Task<IActionResult> ListMyOrders(int pageSize = 10, int pageIndex = 0)
     {
         var user = HttpContext.GetCurrentUser();
