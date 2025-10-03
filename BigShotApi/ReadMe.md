@@ -8,6 +8,67 @@ System Over View
 
 ![Logo](./documentationAssets/sequenceDiagram.png)
 
+### Data Services
+All Classes that implement these interfaces are DatServices
+- IChatbotService
+    ```csharp
+     public interface IChatbotService
+        {
+            Task<ChatbotResponseDto> GetRecommendationsAsync(ChatbotRequestDto request);
+        }
+    ```
+
+- IOrdeService
+
+    ```csharp
+     public interface IOrderService
+        {
+            // CRUD
+            Task<IEnumerable<OrderDto>> ListOrdersAsync(int pageSize, int pageIndex, int? userId = null);
+            Task<OrderDto?> GetOrderByIdAsync(int id);
+            Task<OrderDto> AddOrderAsync(CreateOrderDto dto, int UserId);
+            Task<bool> UpdateOrderAsync(int id, UpdateOrderDto dto);
+            Task<bool> DeleteOrderAsync(int id);
+
+            // Optional helpers
+            Task<IEnumerable<OrderDto>> SearchOrdersAsync(string keyword, int pageSize, int pageIndex);
+        }
+    ```
+
+
+- IProductService
+    ```csharp
+            public interface IProductService
+        {
+            // -------------------- CRUD --------------------
+            Task<Product> AddProductAsync(Product product); // Create
+            Task<bool> DeleteProductAsync(int id); // Delete
+            Task<ProductDto?> GetProductByIdAsync(int id); // Read single item as DTO
+            Task<bool> UpdateProductAsync(int id, UpdateProductDto dto); // Update
+
+            // -------------------- Listing / Utilities --------------------
+            Task<IEnumerable<ProductDto>> ListProductsAsync(int pageSize, int pageIndex);
+            Task<IEnumerable<ProductDto>> SearchProductsAsync(string keyword, int pageSize, int pageIndex);
+            Task<IEnumerable<ProductDto>> FilterByPriceAsync(double minPrice, double maxPrice, int pageSize, int pageIndex);
+            Task<IEnumerable<ProductDto>> GetInStockAsync(int pageSize, int pageIndex);
+            Task<IEnumerable<ProductDto>> GetTopRatedAsync(int count);
+        }
+    }
+    ```
+
+- IUserService
+    ```csharp
+        public interface IUserService
+        {
+            Task<UserDto?> GetMe(AppUser currentUser);
+            Task<RegisterUserResultDto?> CreateUser(RegisterUserDto dto);
+            Task<IEnumerable<UserDto>> GetAllUsers();
+            Task<bool> ChangeUserRole(int userId, string roleName);
+            Task<bool> DeleteUser(int userId);
+        }
+    ```
+
+
 
 ---
 
