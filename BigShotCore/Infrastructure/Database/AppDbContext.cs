@@ -9,7 +9,7 @@ namespace BigShotCore.Infrastructure.Database
         public DbSet<Product> Products { get; set; }
 
         public DbSet<Order> Orders { get; set; }
-        //public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<AppUser> Users { get; set; }
         public DbSet<AppRole> Roles { get; set; }
 
