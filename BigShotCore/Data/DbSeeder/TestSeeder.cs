@@ -37,7 +37,7 @@ namespace BigShotApi.Infrastructure
                 {
                     UserName = "Admin User",
                     Role = adminRole,
-                    ApiKey = Guid.NewGuid().ToString(),
+                    ApiKey = "ef1a74e8-5fdd-48d5-9439-4386d60bd522",
                     Email = "TestAdmin@gmail.com"
                 };
 
@@ -45,7 +45,7 @@ namespace BigShotApi.Infrastructure
                 {
                     UserName = "Test Customer",
                     Role = userRole,
-                    ApiKey = Guid.NewGuid().ToString(),
+                    ApiKey = "2fb5c9f8-c7dd-48bf-b4f3-d89c4fa557fa",
                     Email = "TestUser@gmail.com"
                 };
 

@@ -60,7 +60,9 @@ builder.Services.AddScoped<IUserService, UserService>();
 //builder.Services.AddScoped<IChatbotService, ChatbotService>();
 
 //WebBased Services
-builder.Services.AddHttpClient<IChatbotService, OpenAiChatbotService>();
+//builder.Services.AddHttpClient<IChatbotService, OpenAiChatbotService>();
+
+builder.Services.AddHttpClient<IChatbotService, OpenRouterChatbotService>();
 
 
 
