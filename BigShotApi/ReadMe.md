@@ -4,6 +4,12 @@
 **User API Key:** `2fb5c9f8-c7dd-48bf-b4f3-d89c4fa557fa`
 
 ---
+System Over View
+
+![Logo](./documentationAssets/sequenceDiagram.png)
+
+
+---
 
 ## Database Models
 
